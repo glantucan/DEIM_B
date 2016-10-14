@@ -8,7 +8,7 @@ public class Player : MonoBehaviour {
 
 	private Rigidbody rb;
 
-	private bool isNearButton; 
+	private GameObject nearestButton; 
 
 	// Use this for initialization
 	void Start () {
@@ -24,9 +24,17 @@ public class Player : MonoBehaviour {
 			this.rb.velocity = this.direction.normalized * this.speed;
 		}
 
-		if (isNearButton) {
+		if (nearestButton != null) {
+
 			if ( Input.GetKeyUp(KeyCode.Space)) {
+			// To activate the light gameobjects we are going to use the SetActive() function
+			// But first we need a reference the light gameObjects
 				Debug.Log("Interruptor activado");
+
+				GameObject light = nearestButton.transform.Find("ButtonLight").gameObject; // ("RampSwitch/ButtonLight")
+				light.SetActive(true);
+
+				GameObject glow;
 			}
 		}
 	}
@@ -34,14 +42,14 @@ public class Player : MonoBehaviour {
 	void OnTriggerEnter(Collider other) {
 		Debug.Log("He entrado en el trigger de un " + other.tag);
 		if(other.tag == "Switch" ) {
-			this.isNearButton = true;
+			this.nearestButton = other.gameObject;
 		}
 	}
 
 	void OnTriggerExit(Collider other) {
 		Debug.Log("He salido en el trigger");
 		if(other.tag == "Switch" ) {
-			this.isNearButton = false;
+			this.nearestButton = null;
 		}
 	}
 }
