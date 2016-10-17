@@ -30,11 +30,16 @@ public class Player : MonoBehaviour {
 			// To activate the light gameobjects we are going to use the SetActive() function
 			// But first we need a reference the light gameObjects
 				Debug.Log("Interruptor activado");
-
-				GameObject light = nearestButton.transform.Find("ButtonLight").gameObject; // ("RampSwitch/ButtonLight")
+				Transform lightTr = nearestButton.transform.Find("ButtonLight");
+				GameObject light = lightTr.gameObject; // ("RampSwitch/ButtonLight")
 				light.SetActive(true);
+				Transform glowTr = nearestButton.transform.Find("GlimmerLight");
+				GameObject glow = glowTr.gameObject;
+				glow.SetActive(true);
 
-				GameObject glow;
+				GameObject ramp = GameObject.Find("RampAnimation");
+				Animation rampAnim = ramp.GetComponent<Animation>();
+				rampAnim.Play("showRamp");
 			}
 		}
 	}
