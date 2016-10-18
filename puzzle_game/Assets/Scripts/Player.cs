@@ -29,20 +29,45 @@ public class Player : MonoBehaviour {
 			if ( Input.GetKeyUp(KeyCode.Space)) {
 			// To activate the light gameobjects we are going to use the SetActive() function
 			// But first we need a reference the light gameObjects
-				Debug.Log("Interruptor activado");
-				Transform lightTr = nearestButton.transform.Find("ButtonLight");
-				GameObject light = lightTr.gameObject; // ("RampSwitch/ButtonLight")
-				light.SetActive(true);
-				Transform glowTr = nearestButton.transform.Find("GlimmerLight");
-				GameObject glow = glowTr.gameObject;
-				glow.SetActive(true);
 
-				GameObject ramp = GameObject.Find("RampAnimation");
-				Animation rampAnim = ramp.GetComponent<Animation>();
-				rampAnim.Play("showRamp");
+				//bool isActive = IsButtonActive(nearestButton);
+				if (IsButtonActive(nearestButton)){
+					ActivateButtonLights();
+					PerformButtonAction("Ramp", "show");
+				} else {
+					DeactivateButtonLights();
+					PerformButtonAction("Ramp", "hide");
+				}
 			}
 		}
 	}
+
+	void MovePlayer() {
+
+	}
+
+	bool IsButtonActive(GameObject button) {
+		Transform lightTr = button.transform.Find("ButtonLight");
+		GameObject light = lightTr.gameObject;
+		return light.activeSelf;
+	}
+
+	void PerformButtonAction(string targetName, string action) {
+		GameObject ramp = GameObject.Find(targetName + "Animation");
+		Animation rampAnim = ramp.GetComponent<Animation>();
+		rampAnim.Play(action + targetName);
+	}
+
+	void ActivateButtonLights() {
+		Debug.Log("Interruptor activado");
+		Transform lightTr = this.nearestButton.transform.Find("ButtonLight");
+		GameObject light = lightTr.gameObject; // ("RampSwitch/ButtonLight")
+		light.SetActive(true);
+		Transform glowTr = this.nearestButton.transform.Find("GlimmerLight");
+		GameObject glow = glowTr.gameObject;
+		glow.SetActive(true);
+	}
+
 
 	void OnTriggerEnter(Collider other) {
 		Debug.Log("He entrado en el trigger de un " + other.tag);
