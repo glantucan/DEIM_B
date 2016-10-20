@@ -25,48 +25,61 @@ public class Player : MonoBehaviour {
 		}
 
 		if (nearestButton != null) {
-
-			if ( Input.GetKeyUp(KeyCode.Space)) {
-			// To activate the light gameobjects we are going to use the SetActive() function
-			// But first we need a reference the light gameObjects
-
-				//bool isActive = IsButtonActive(nearestButton);
-				if (IsButtonActive(nearestButton)){
-					ActivateButtonLights();
-					PerformButtonAction("Ramp", "show");
-				} else {
-					DeactivateButtonLights();
-					PerformButtonAction("Ramp", "hide");
-				}
+			if (Input.GetKeyUp (KeyCode.Space)) {
+				SwitchButton (nearestButton);
 			}
 		}
 	}
 
-	void MovePlayer() {
-
+	void SwitchButton(GameObject button) {
+		if (IsChildActive (button, "ButtonLight")) {
+			/*DeActivateChild (button, "ButtonLight");
+			DeActivateChild (button, "GlimmerLight");*/
+			SetChildActive (button, "ButtonLight", false);
+			SetChildActive (button, "GlimmerLight", false);
+			PerformButtonAction(button.name, "hide");
+		} else {
+			/*ActivateChild (button, "ButtonLight");
+			ActivateChild (button, "GlimmerLight");*/
+			SetChildActive (button, "ButtonLight", true);
+			SetChildActive (button, "GlimmerLight", true);
+			PerformButtonAction(button.name, "show");
+		}
 	}
 
-	bool IsButtonActive(GameObject button) {
-		Transform lightTr = button.transform.Find("ButtonLight");
-		GameObject light = lightTr.gameObject;
-		return light.activeSelf;
+	bool IsChildActive(GameObject parent, string childName) {
+		Transform childTr = parent.transform.Find(childName);
+		GameObject child = childTr.gameObject;
+		return child.activeSelf;
 	}
 
-	void PerformButtonAction(string targetName, string action) {
-		GameObject ramp = GameObject.Find(targetName + "Animation");
-		Animation rampAnim = ramp.GetComponent<Animation>();
-		rampAnim.Play(action + targetName);
+	void SetChildActive(GameObject parent, string childName, bool activation) {
+		Transform childTr = parent.transform.Find(childName);
+		GameObject child = childTr.gameObject; 
+		child.SetActive(activation);
 	}
 
-	void ActivateButtonLights() {
-		Debug.Log("Interruptor activado");
-		Transform lightTr = this.nearestButton.transform.Find("ButtonLight");
-		GameObject light = lightTr.gameObject; // ("RampSwitch/ButtonLight")
-		light.SetActive(true);
-		Transform glowTr = this.nearestButton.transform.Find("GlimmerLight");
-		GameObject glow = glowTr.gameObject;
-		glow.SetActive(true);
+	/*void ActivateChild(GameObject parent, string childName) {
+		Transform childTr = parent.transform.Find(childName);
+		GameObject child = childTr.gameObject; 
+		child.SetActive(true);
 	}
+
+	void DeActivateChild(GameObject parent, string childName) {
+		Transform childTr = parent.transform.Find(childName);
+		GameObject child = childTr.gameObject; 
+		child.SetActive(false);
+	}*/
+
+	void PerformButtonAction(string buttonName, string action) {
+		string[] targetNameSplitted = buttonName.Split('_');
+		string targetName = targetNameSplitted [0];
+		Debug.Log ("nombre del target: " + targetName);
+		GameObject target = GameObject.Find(targetName + "Animation");
+		Animation targetAnim = target.GetComponent<Animation>();
+		targetAnim.Play(action + targetName);
+	}
+
 
 
 	void OnTriggerEnter(Collider other) {
