@@ -10,9 +10,14 @@ public class Player : MonoBehaviour {
 
 	private GameObject nearestButton; 
 
+	[SerializeField] private GameObject[] inventory;
+	private int objectCounter;
+
 	// Use this for initialization
 	void Start () {
 		this.rb = this.GetComponent<Rigidbody>();
+		inventory = new GameObject[5];
+		objectCounter = 0;
 	}
 	
 	// Update is called once per frame
@@ -33,14 +38,10 @@ public class Player : MonoBehaviour {
 
 	void SwitchButton(GameObject button) {
 		if (IsChildActive (button, "ButtonLight")) {
-			/*DeActivateChild (button, "ButtonLight");
-			DeActivateChild (button, "GlimmerLight");*/
 			SetChildActive (button, "ButtonLight", false);
 			SetChildActive (button, "GlimmerLight", false);
-			PerformButtonAction(button.name, "hide");
+			PerformButtonAction(button.name, "hide"); // button.name = "Bridge_Switch"
 		} else {
-			/*ActivateChild (button, "ButtonLight");
-			ActivateChild (button, "GlimmerLight");*/
 			SetChildActive (button, "ButtonLight", true);
 			SetChildActive (button, "GlimmerLight", true);
 			PerformButtonAction(button.name, "show");
@@ -59,38 +60,26 @@ public class Player : MonoBehaviour {
 		child.SetActive(activation);
 	}
 
-	/*void ActivateChild(GameObject parent, string childName) {
-		Transform childTr = parent.transform.Find(childName);
-		GameObject child = childTr.gameObject; 
-		child.SetActive(true);
-	}
-
-	void DeActivateChild(GameObject parent, string childName) {
-		Transform childTr = parent.transform.Find(childName);
-		GameObject child = childTr.gameObject; 
-		child.SetActive(false);
-	}*/
-
-	void PerformButtonAction(string buttonName, string action) {
-		string[] targetNameSplitted = buttonName.Split('_');
+	void PerformButtonAction(string buttonName, string action) { // buttonName = "Bridge_Switch"
+		string[] targetNameSplitted = buttonName.Split('_');// -> ["Bridge", "Switch"]
 		string targetName = targetNameSplitted [0];
-		Debug.Log ("nombre del target: " + targetName);
 		GameObject target = GameObject.Find(targetName + "Animation");
 		Animation targetAnim = target.GetComponent<Animation>();
 		targetAnim.Play(action + targetName);
 	}
 
 
-
 	void OnTriggerEnter(Collider other) {
-		Debug.Log("He entrado en el trigger de un " + other.tag);
-		if(other.tag == "Switch" ) {
+		if (other.tag == "Switch") {
 			this.nearestButton = other.gameObject;
+		} else if (other.tag == "Pickable") {
+			inventory [objectCounter] = other.gameObject;
+			other.gameObject.SetActive (false);
+			objectCounter = objectCounter + 1;
 		}
 	}
 
 	void OnTriggerExit(Collider other) {
-		Debug.Log("He salido en el trigger");
 		if(other.tag == "Switch" ) {
 			this.nearestButton = null;
 		}
