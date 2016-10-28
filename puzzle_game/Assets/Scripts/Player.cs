@@ -73,11 +73,24 @@ public class Player : MonoBehaviour {
 		if (other.tag == "Switch") {
 			this.nearestButton = other.gameObject;
 		} else if (other.tag == "Pickable") {
-			inventory [objectCounter] = other.gameObject;
-			other.gameObject.SetActive (false);
-			objectCounter = objectCounter + 1;
+
+			addToInventory (objectCounter, inventory, other.gameObject);
+
 		}
 	}
+
+	void addToInventory(int counter, GameObject[] anyInventory, GameObject theObject) {
+
+		if (counter < anyInventory.Length) {
+			anyInventory [counter] = theObject;
+			theObject.SetActive (false);
+			counter = counter + 1;
+		} else {
+			Debug.Log("No queda sitio en el inventario");
+		}
+	}
+
+
 
 	void OnTriggerExit(Collider other) {
 		if(other.tag == "Switch" ) {
