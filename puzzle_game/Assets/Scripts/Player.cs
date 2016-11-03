@@ -34,6 +34,26 @@ public class Player : MonoBehaviour {
 				SwitchButton (nearestButton);
 			}
 		}
+
+		if (Input.GetMouseButtonUp(0)){
+			LaunchStoneFromInventory();
+		}
+	}
+
+	void LaunchStoneFromInventory() {
+		if (objectCounter > 0) {
+			GameObject stone = inventory[objectCounter-1];
+			inventory[objectCounter-1] = null;
+			objectCounter = objectCounter - 1;
+			stone.SetActive(true);
+			stone.transform.position = this.transform.position + this.transform.forward;
+
+			StoneMovement stoneLauncher = stone.GetComponent<StoneMovement>();
+			stoneLauncher.Launch(transform.forward);
+
+		} else {
+			Debug.Log("No quedan piedras en el inventario");
+		}
 	}
 
 	void SwitchButton(GameObject button) {
@@ -73,18 +93,16 @@ public class Player : MonoBehaviour {
 		if (other.tag == "Switch") {
 			this.nearestButton = other.gameObject;
 		} else if (other.tag == "Pickable") {
-
-			addToInventory (objectCounter, inventory, other.gameObject);
-
+			addToInventory (inventory, other.gameObject);
 		}
 	}
 
-	void addToInventory(int counter, GameObject[] anyInventory, GameObject theObject) {
+	void addToInventory( GameObject[] anyInventory, GameObject theObject) {
 
-		if (counter < anyInventory.Length) {
-			anyInventory [counter] = theObject;
+		if (objectCounter < anyInventory.Length) {
+			anyInventory [objectCounter] = theObject;
 			theObject.SetActive (false);
-			counter = counter + 1;
+			objectCounter = objectCounter + 1;
 		} else {
 			Debug.Log("No queda sitio en el inventario");
 		}
