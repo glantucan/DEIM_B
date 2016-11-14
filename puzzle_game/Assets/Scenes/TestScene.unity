@@ -2480,15 +2480,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4000013995433164, guid: 7216c5385c42f644dba3f2aed4b3da39, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -2.57
       objectReference: {fileID: 0}
     - target: {fileID: 4000013995433164, guid: 7216c5385c42f644dba3f2aed4b3da39, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4000013995433164, guid: 7216c5385c42f644dba3f2aed4b3da39, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 15.29
+      value: 8.94
       objectReference: {fileID: 0}
     - target: {fileID: 4000013995433164, guid: 7216c5385c42f644dba3f2aed4b3da39, type: 2}
       propertyPath: m_LocalRotation.x
@@ -4274,7 +4274,7 @@ Rigidbody:
   m_Mass: 1
   m_Drag: 8
   m_AngularDrag: 0
-  m_UseGravity: 0
+  m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 80
@@ -4292,6 +4292,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   inventory: []
+  isGrounded: 0
 --- !u!1 &2125606876
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Player : MonoBehaviour {
 
@@ -13,11 +14,19 @@ public class Player : MonoBehaviour {
 	[SerializeField] private GameObject[] inventory;
 	private int objectCounter;
 
+	[SerializeField] private bool isGrounded;
+	private float dragOnGround;
+	private List<Collider> groundContacts;
+
+
 	// Use this for initialization
 	void Start () {
 		this.rb = this.GetComponent<Rigidbody>();
 		inventory = new GameObject[5];
 		objectCounter = 0;
+		this.isGrounded = true;
+		this.dragOnGround = this.rb.drag;
+		this.groundContacts = new List<Collider>();
 	}
 	
 	// Update is called once per frame
@@ -25,13 +34,24 @@ public class Player : MonoBehaviour {
 		float xInput = Input.GetAxisRaw("Horizontal");
 		float zInput = Input.GetAxisRaw("Vertical");
 		this.direction = xInput * Vector3.right + zInput * Vector3.forward;
+
+		// v = v0 + a * t
+		// s = s0 + v * t
+
 		if( this.direction.magnitude != 0) {
-			this.rb.velocity = this.direction.normalized * this.speed;
+			// this.rb.velocity = this.direction.normalized * this.speed;
+			this.rb.velocity = new Vector3 (this.direction.normalized.x * this.speed, this.rb.velocity.y, this.direction.normalized.z * this.speed);
+			this.rb.velocity = this.direction.normalized * this.speed + this.rb.velocity.y * Vector3.up;
+		}
+		if (groundContacts.Count == 0) {
+			this.rb.drag = 0;
+		} else {
+			this.rb.drag = this.dragOnGround;
 		}
 
-		if (nearestButton != null) {
+		if (this.nearestButton != null) {
 			if (Input.GetKeyUp (KeyCode.Space)) {
-				SwitchButton (nearestButton);
+				SwitchButton (this.nearestButton);
 			}
 		}
 
@@ -113,6 +133,19 @@ public class Player : MonoBehaviour {
 	void OnTriggerExit(Collider other) {
 		if(other.tag == "Switch" ) {
 			this.nearestButton = null;
+		}
+	}
+
+
+	void OnCollisionEnter(Collision col) {
+		if (col.gameObject.tag == "Ground") {
+			groundContacts.Add(col.collider);
+		}
+	}
+
+	void OnCollisionExit(Collision col) {
+		if (col.gameObject.tag == "Ground") {
+			groundContacts.Remove(col.collider);
 		}
 	}
 }
