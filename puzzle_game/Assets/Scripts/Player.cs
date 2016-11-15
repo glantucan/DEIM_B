@@ -14,23 +14,61 @@ public class Player : MonoBehaviour {
 	[SerializeField] private GameObject[] inventory;
 	private int objectCounter;
 
-	[SerializeField] private bool isGrounded;
 	private float dragOnGround;
 	private List<Collider> groundContacts;
-
+	[SerializeField] private float jumpSpeed;
 
 	// Use this for initialization
 	void Start () {
 		this.rb = this.GetComponent<Rigidbody>();
 		inventory = new GameObject[5];
 		objectCounter = 0;
-		this.isGrounded = true;
 		this.dragOnGround = this.rb.drag;
 		this.groundContacts = new List<Collider>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
+		// ROTATION:
+		// -------------------------------------------------------------------------------------------------------------
+		// Create the ray starting at the camera with the direction corresponding to the 2D position
+		// of the mouse pointer on the screen.
+		Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+		// Create a plane, parallel to the ground and at the height of the player gameobject 
+		// to intersect the camera ray. This way we avoid inconsitencies produced 
+		// by different game object heights in the scene.
+		Plane viewPlane = new Plane(Vector3.up, transform.position); 	// 1st paramenter is the vector defining orientation of 
+																// the plane. 2nd is just a point the plane must include
+        // Define a float to hold the distance to the intersection point
+        float rayDistance;
+        // Cast the ray from the plane and check if there is an intersection
+        if (viewPlane.Raycast(mouseRay, out rayDistance)) {
+        	// Get the intersection point between the ray and the plane
+            Vector3 intersectionPoint = mouseRay.GetPoint(rayDistance);
+            // Draw a line in the editor so we cans see the ray and check 
+            // whether it's all right
+            Debug.DrawLine(mouseRay.origin, intersectionPoint, Color.green);
+            // Finally rotate the player so it looks to the intersection point
+            //rotator.rotate(intersectionPoint);
+            this.transform.LookAt(intersectionPoint);
+        }
+
+
+		MovePlayer();
+
+		if (this.nearestButton != null) {
+			if (Input.GetKeyUp (KeyCode.F)) {
+				SwitchButton (this.nearestButton);
+			}
+		}
+
+		if (Input.GetMouseButtonUp(0)){
+			LaunchStoneFromInventory();
+		}
+	}
+
+	void MovePlayer() {
 		float xInput = Input.GetAxisRaw("Horizontal");
 		float zInput = Input.GetAxisRaw("Vertical");
 		this.direction = xInput * Vector3.right + zInput * Vector3.forward;
@@ -39,25 +77,20 @@ public class Player : MonoBehaviour {
 		// s = s0 + v * t
 
 		if( this.direction.magnitude != 0) {
-			// this.rb.velocity = this.direction.normalized * this.speed;
-			this.rb.velocity = new Vector3 (this.direction.normalized.x * this.speed, this.rb.velocity.y, this.direction.normalized.z * this.speed);
+			// this.rb.velocity = this.direction.normalized * this.speed; // Esto no funciona
+			// this.rb.velocity = new Vector3 (this.direction.normalized.x * this.speed, this.rb.velocity.y, this.direction.normalized.z * this.speed);
 			this.rb.velocity = this.direction.normalized * this.speed + this.rb.velocity.y * Vector3.up;
 		}
+
 		if (groundContacts.Count == 0) {
 			this.rb.drag = 0;
 		} else {
+			if (Input.GetKey (KeyCode.Space)) {
+				this.rb.velocity = this.direction.normalized * this.speed + jumpSpeed * Vector3.up;
+			}
 			this.rb.drag = this.dragOnGround;
 		}
 
-		if (this.nearestButton != null) {
-			if (Input.GetKeyUp (KeyCode.Space)) {
-				SwitchButton (this.nearestButton);
-			}
-		}
-
-		if (Input.GetMouseButtonUp(0)){
-			LaunchStoneFromInventory();
-		}
 	}
 
 	void LaunchStoneFromInventory() {
@@ -112,8 +145,14 @@ public class Player : MonoBehaviour {
 	void OnTriggerEnter(Collider other) {
 		if (other.tag == "Switch") {
 			this.nearestButton = other.gameObject;
-		} else if (other.tag == "Pickable") {
+		} 
+
+		if (other.tag == "Pickable") {
 			addToInventory (inventory, other.gameObject);
+		}
+
+		if (other.tag == "Ground") {
+			groundContacts.Add(other);
 		}
 	}
 
@@ -134,18 +173,9 @@ public class Player : MonoBehaviour {
 		if(other.tag == "Switch" ) {
 			this.nearestButton = null;
 		}
-	}
-
-
-	void OnCollisionEnter(Collision col) {
-		if (col.gameObject.tag == "Ground") {
-			groundContacts.Add(col.collider);
+		if (other.tag == "Ground") {
+			groundContacts.Remove(other);
 		}
 	}
 
-	void OnCollisionExit(Collision col) {
-		if (col.gameObject.tag == "Ground") {
-			groundContacts.Remove(col.collider);
-		}
-	}
 }
