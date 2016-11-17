@@ -16,7 +16,10 @@ public class StoneMovement : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		
+		if(this.rb.velocity == Vector3.zero) {
+			this.col.isTrigger = true;
+			this.rb.useGravity = false;
+		}
 	}
 
 	public void Launch(Vector3 launchDirection) {

@@ -18,6 +18,10 @@ public class Player : MonoBehaviour {
 	private List<Collider> groundContacts;
 	[SerializeField] private float jumpSpeed;
 
+	[SerializeField] private Transform cameraTr;
+	private Vector3 camToPlayerDistance;
+	private int cameraAngle;
+
 	// Use this for initialization
 	void Start () {
 		this.rb = this.GetComponent<Rigidbody>();
@@ -25,16 +29,71 @@ public class Player : MonoBehaviour {
 		objectCounter = 0;
 		this.dragOnGround = this.rb.drag;
 		this.groundContacts = new List<Collider>();
+
+		this.camToPlayerDistance = this.cameraTr.position - this.transform.position;
+		this.cameraAngle = 0;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		
+		RotatePlayer();
 
+		MovePlayer();
+
+		if (this.nearestButton != null) {
+			if (Input.GetKeyUp (KeyCode.F)) {
+				SwitchButton (this.nearestButton);
+			}
+		}
+
+		if (Input.GetMouseButtonUp(0)){
+			LaunchStoneFromInventory();
+		}
+
+		if (Input.GetKeyDown(KeyCode.Q)) {
+			if(cameraAngle != 270) {
+				cameraAngle = cameraAngle + 90;
+			} else {
+				cameraAngle = 0;
+			}
+
+			this.camToPlayerDistance = new Vector3 (
+					this.camToPlayerDistance.z,
+					this.camToPlayerDistance.y,
+					-this.camToPlayerDistance.x
+				);
+			Debug.Log(cameraAngle);
+		} else if (Input.GetKeyDown(KeyCode.E)) {
+			if(cameraAngle != 0) {
+				cameraAngle = cameraAngle - 90;
+			} else {
+				cameraAngle = 270;
+			}
+
+			this.camToPlayerDistance = new Vector3 (
+					-this.camToPlayerDistance.z,
+					this.camToPlayerDistance.y,
+					this.camToPlayerDistance.x
+				);
+			Debug.Log(cameraAngle);
+		}
+
+	}
+
+
+	void FixedUpdate() {
+		// Camera follow
+		this.cameraTr.LookAt(this.transform);
+		this.cameraTr.position = Vector3.Lerp(this.cameraTr.position, this.transform.position + this.camToPlayerDistance, 0.05F);
+	}
+
+	void RotatePlayer() {
 		// ROTATION:
 		// -------------------------------------------------------------------------------------------------------------
 		// Create the ray starting at the camera with the direction corresponding to the 2D position
 		// of the mouse pointer on the screen.
-		Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+		Ray mouseRay = cameraTr.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
 		// Create a plane, parallel to the ground and at the height of the player gameobject 
 		// to intersect the camera ray. This way we avoid inconsitencies produced 
 		// by different game object heights in the scene.
@@ -53,19 +112,6 @@ public class Player : MonoBehaviour {
             //rotator.rotate(intersectionPoint);
             this.transform.LookAt(intersectionPoint);
         }
-
-
-		MovePlayer();
-
-		if (this.nearestButton != null) {
-			if (Input.GetKeyUp (KeyCode.F)) {
-				SwitchButton (this.nearestButton);
-			}
-		}
-
-		if (Input.GetMouseButtonUp(0)){
-			LaunchStoneFromInventory();
-		}
 	}
 
 	void MovePlayer() {

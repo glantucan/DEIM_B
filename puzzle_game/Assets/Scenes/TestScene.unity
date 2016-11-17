@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44692492, g: 0.4967869, b: 0.57508546, a: 1}
+  m_IndirectSpecularColor: {r: 0.44692534, g: 0.4967872, b: 0.57508564, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -2521,15 +2521,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4000013995433164, guid: 7216c5385c42f644dba3f2aed4b3da39, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -2.57
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4000013995433164, guid: 7216c5385c42f644dba3f2aed4b3da39, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 4.193
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4000013995433164, guid: 7216c5385c42f644dba3f2aed4b3da39, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 8.94
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4000013995433164, guid: 7216c5385c42f644dba3f2aed4b3da39, type: 2}
       propertyPath: m_LocalRotation.x
@@ -4334,6 +4334,7 @@ MonoBehaviour:
   speed: 10
   inventory: []
   jumpSpeed: 7
+  cameraTr: {fileID: 1045210801}
 --- !u!4 &2110437222 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4000013995433164, guid: 7216c5385c42f644dba3f2aed4b3da39,
