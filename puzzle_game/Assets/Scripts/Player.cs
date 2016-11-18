@@ -8,12 +8,6 @@ public class Player : MonoBehaviour {
 	private Vector3 direction;
 
 	private Rigidbody rb;
-
-	private GameObject nearestButton; 
-
-	[SerializeField] private GameObject[] inventory;
-	private int objectCounter;
-
 	private float dragOnGround;
 	private List<Collider> groundContacts;
 	[SerializeField] private float jumpSpeed;
@@ -25,31 +19,20 @@ public class Player : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		this.rb = this.GetComponent<Rigidbody>();
-		inventory = new GameObject[5];
-		objectCounter = 0;
+					
 		this.dragOnGround = this.rb.drag;
 		this.groundContacts = new List<Collider>();
 
 		this.camToPlayerDistance = this.cameraTr.position - this.transform.position;
 		this.cameraAngle = 0;
+
+
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		
-		RotatePlayer();
+	void Update () {		
 
 		MovePlayer();
-
-		if (this.nearestButton != null) {
-			if (Input.GetKeyUp (KeyCode.F)) {
-				SwitchButton (this.nearestButton);
-			}
-		}
-
-		if (Input.GetMouseButtonUp(0)){
-			LaunchStoneFromInventory();
-		}
 
 		if (Input.GetKeyDown(KeyCode.Q)) {
 			if(cameraAngle != 270) {
@@ -63,7 +46,7 @@ public class Player : MonoBehaviour {
 					this.camToPlayerDistance.y,
 					-this.camToPlayerDistance.x
 				);
-			Debug.Log(cameraAngle);
+
 		} else if (Input.GetKeyDown(KeyCode.E)) {
 			if(cameraAngle != 0) {
 				cameraAngle = cameraAngle - 90;
@@ -76,9 +59,7 @@ public class Player : MonoBehaviour {
 					this.camToPlayerDistance.y,
 					this.camToPlayerDistance.x
 				);
-			Debug.Log(cameraAngle);
 		}
-
 	}
 
 
@@ -88,36 +69,21 @@ public class Player : MonoBehaviour {
 		this.cameraTr.position = Vector3.Lerp(this.cameraTr.position, this.transform.position + this.camToPlayerDistance, 0.05F);
 	}
 
-	void RotatePlayer() {
-		// ROTATION:
-		// -------------------------------------------------------------------------------------------------------------
-		// Create the ray starting at the camera with the direction corresponding to the 2D position
-		// of the mouse pointer on the screen.
-		Ray mouseRay = cameraTr.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
-		// Create a plane, parallel to the ground and at the height of the player gameobject 
-		// to intersect the camera ray. This way we avoid inconsitencies produced 
-		// by different game object heights in the scene.
-		Plane viewPlane = new Plane(Vector3.up, transform.position); 	// 1st paramenter is the vector defining orientation of 
-																// the plane. 2nd is just a point the plane must include
-        // Define a float to hold the distance to the intersection point
-        float rayDistance;
-        // Cast the ray from the plane and check if there is an intersection
-        if (viewPlane.Raycast(mouseRay, out rayDistance)) {
-        	// Get the intersection point between the ray and the plane
-            Vector3 intersectionPoint = mouseRay.GetPoint(rayDistance);
-            // Draw a line in the editor so we cans see the ray and check 
-            // whether it's all right
-            Debug.DrawLine(mouseRay.origin, intersectionPoint, Color.green);
-            // Finally rotate the player so it looks to the intersection point
-            //rotator.rotate(intersectionPoint);
-            this.transform.LookAt(intersectionPoint);
-        }
-	}
+
 
 	void MovePlayer() {
 		float xInput = Input.GetAxisRaw("Horizontal");
 		float zInput = Input.GetAxisRaw("Vertical");
-		this.direction = xInput * Vector3.right + zInput * Vector3.forward;
+
+		if (this.cameraAngle == 0) {
+			this.direction = xInput * Vector3.right + zInput * Vector3.forward;
+		} else if (this.cameraAngle == 90) {
+			this.direction = zInput * Vector3.right - xInput * Vector3.forward;
+		} else if (this.cameraAngle == 180) {
+			this.direction = -xInput * Vector3.right - zInput * Vector3.forward;
+		} else if (this.cameraAngle == 270) {
+			this.direction = -zInput * Vector3.right + xInput * Vector3.forward;
+		}
 
 		// v = v0 + a * t
 		// s = s0 + v * t
@@ -136,89 +102,16 @@ public class Player : MonoBehaviour {
 			}
 			this.rb.drag = this.dragOnGround;
 		}
-
 	}
-
-	void LaunchStoneFromInventory() {
-		if (objectCounter > 0) {
-			GameObject stone = inventory[objectCounter-1];
-			inventory[objectCounter-1] = null;
-			objectCounter = objectCounter - 1;
-			stone.SetActive(true);
-			stone.transform.position = this.transform.position + this.transform.forward;
-
-			StoneMovement stoneLauncher = stone.GetComponent<StoneMovement>();
-			stoneLauncher.Launch(transform.forward);
-
-		} else {
-			Debug.Log("No quedan piedras en el inventario");
-		}
-	}
-
-	void SwitchButton(GameObject button) {
-		if (IsChildActive (button, "ButtonLight")) {
-			SetChildActive (button, "ButtonLight", false);
-			SetChildActive (button, "GlimmerLight", false);
-			PerformButtonAction(button.name, "hide"); // button.name = "Bridge_Switch"
-		} else {
-			SetChildActive (button, "ButtonLight", true);
-			SetChildActive (button, "GlimmerLight", true);
-			PerformButtonAction(button.name, "show");
-		}
-	}
-
-	bool IsChildActive(GameObject parent, string childName) {
-		Transform childTr = parent.transform.Find(childName);
-		GameObject child = childTr.gameObject;
-		return child.activeSelf;
-	}
-
-	void SetChildActive(GameObject parent, string childName, bool activation) {
-		Transform childTr = parent.transform.Find(childName);
-		GameObject child = childTr.gameObject; 
-		child.SetActive(activation);
-	}
-
-	void PerformButtonAction(string buttonName, string action) { // buttonName = "Bridge_Switch"
-		string[] targetNameSplitted = buttonName.Split('_');// -> ["Bridge", "Switch"]
-		string targetName = targetNameSplitted [0];
-		GameObject target = GameObject.Find(targetName + "Animation");
-		Animation targetAnim = target.GetComponent<Animation>();
-		targetAnim.Play(action + targetName);
-	}
-
 
 	void OnTriggerEnter(Collider other) {
-		if (other.tag == "Switch") {
-			this.nearestButton = other.gameObject;
-		} 
-
-		if (other.tag == "Pickable") {
-			addToInventory (inventory, other.gameObject);
-		}
-
 		if (other.tag == "Ground") {
 			groundContacts.Add(other);
 		}
 	}
 
-	void addToInventory( GameObject[] anyInventory, GameObject theObject) {
-
-		if (objectCounter < anyInventory.Length) {
-			anyInventory [objectCounter] = theObject;
-			theObject.SetActive (false);
-			objectCounter = objectCounter + 1;
-		} else {
-			Debug.Log("No queda sitio en el inventario");
-		}
-	}
-
-
-
 	void OnTriggerExit(Collider other) {
-		if(other.tag == "Switch" ) {
-			this.nearestButton = null;
-		}
+		
 		if (other.tag == "Ground") {
 			groundContacts.Remove(other);
 		}
