@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Player : MonoBehaviour {
+public class PlayerMovement : MonoBehaviour {
 
 	public float speed;
 	private Vector3 direction;

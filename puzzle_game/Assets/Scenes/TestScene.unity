@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44692534, g: 0.4967872, b: 0.57508564, a: 1}
+  m_IndirectSpecularColor: {r: 0.44692492, g: 0.4967869, b: 0.57508546, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -899,6 +899,30 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 3, y: 3, z: 2}
   m_Center: {x: 1.5, y: 1.5, z: -1}
+--- !u!1 &363907430 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1000011870688088, guid: 20175aaf208c3f147b2461ebefd65a17,
+    type: 2}
+  m_PrefabInternal: {fileID: 363907427}
+--- !u!1 &363907431 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1000013246346976, guid: 20175aaf208c3f147b2461ebefd65a17,
+    type: 2}
+  m_PrefabInternal: {fileID: 363907427}
+--- !u!114 &363907432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 363907428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0d2b63814ece7043a2d716097e7cf01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonLight: {fileID: 363907431}
+  buttonGlimmerLight: {fileID: 363907430}
+  target: {fileID: 2091890323}
 --- !u!1 &500695638
 GameObject:
   m_ObjectHideFlags: 0
@@ -4221,6 +4245,25 @@ Prefab:
     - {fileID: 95000013667578604, guid: b051fba1d7b15594894bd03ea9ccdb90, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: b051fba1d7b15594894bd03ea9ccdb90, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &2091890323 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1000010366042002, guid: b051fba1d7b15594894bd03ea9ccdb90,
+    type: 2}
+  m_PrefabInternal: {fileID: 2091890322}
+--- !u!114 &2091890324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2091890323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 109e84112d437b94f9b5441868138fb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  anim: {fileID: 1590770404}
+  showAnimation: {fileID: 7400000, guid: 945856b0664df744dafca45739f9bf00, type: 2}
+  hideAnimation: {fileID: 7400000, guid: 2ab933aee7f5f714ba599b83314b6db8, type: 2}
 --- !u!1 &2099574877
 GameObject:
   m_ObjectHideFlags: 0

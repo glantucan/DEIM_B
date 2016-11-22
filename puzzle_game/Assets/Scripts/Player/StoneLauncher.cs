@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class StoneLauncer : MonoBehaviour {
+public class StoneLauncher : MonoBehaviour {
 
 	private PlayerInventory inventory;
 
