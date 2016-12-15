@@ -2,14 +2,8 @@
 using System.Collections;
 
 public class UserInput2 : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
 	// Update is called once per frame
-	void Update () {
+	private void Update () {
 		if (Input.GetKey(KeyCode.P)) {
 			// Mover hacia delante
 			PlayerMovement movement = this.GetComponent<PlayerMovement>();
@@ -21,7 +15,8 @@ public class UserInput2 : MonoBehaviour {
 		}
 		if (Input.GetKeyDown(KeyCode.Comma)) {
 			// Mover hacia atras
-			Debug.Log("Disparar");
+			ShootControl shooter = this.GetComponent<ShootControl>();
+			shooter.Shoot();
 		}
 	}
 }

@@ -2,11 +2,8 @@
 using System.Collections;
 
 public class UserInput1 : MonoBehaviour {
-
-	
-	
 	// Update is called once per frame
-	void Update () {
+	private void Update () {
 		if (Input.GetKey(KeyCode.Q)) {
 			// Mover hacia delante
 			PlayerMovement movement = this.GetComponent<PlayerMovement>();
